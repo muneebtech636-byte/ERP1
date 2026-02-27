@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexGen ERP | Enterprise Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar glass-panel">
+            <div class="logo-area">
+                <i class="fa-solid fa-boxes-stacked logo-icon"></i>
+                <h1 class="logo-text">NexGen <span>ERP</span></h1>
+            </div>
+            <ul class="nav-links">
+                <li class="active" data-target="dashboard">
+                    <i class="fa-solid fa-border-all"></i>
+                    <span>Dashboard</span>
+                </li>
+                <li data-target="users">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <span>Users & Admin</span>
+                </li>
+                <li data-target="hr">
+                    <i class="fa-solid fa-users"></i>
+                    <span>HR & Attendance</span>
+                </li>
+                <li data-target="finance">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Finance</span>
+                </li>
+                <li data-target="pos">
+                    <i class="fa-solid fa-cash-register"></i>
+                    <span>POS System</span>
+                </li>
+                <li data-target="inventory">
+                    <i class="fa-solid fa-warehouse"></i>
+                    <span>Inventory</span>
+                </li>
+                <li data-target="payroll">
+                    <i class="fa-solid fa-money-check-dollar"></i>
+                    <span>Payroll</span>
+                </li>
+                <li data-target="reports">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Reports</span>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="top-header glass-panel">
+                <div class="search-bar">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" placeholder="Search modules, employees, or items...">
+                </div>
+                <div class="user-profile">
+                    <button class="btn btn-secondary btn-sm" onclick="toggleTheme()"
+                        style="border-radius: 50%; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; padding: 0;">
+                        <i class="fa-solid fa-moon" id="theme-icon"></i>
+                    </button>
+                    <div class="notification-bell">
+                        <i class="fa-solid fa-bell"></i>
+                        <span class="badge">3</span>
+                    </div>
+                    <img src="https://ui-avatars.com/api/?name=Admin+User&background=6c5ce7&color=fff" alt="User Avatar"
+                        class="avatar">
+                    <div class="user-info">
+                        <strong>Admin User</strong>
+                        <span>System Admin</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-view-container">
+                <!-- Dashboard View -->
+                <section id="dashboard" class="content-section active">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                        <h2 class="section-title" style="margin-bottom: 0;">Overview Dashboard</h2>
+                        <button class="btn btn-secondary" onclick="resetSystemData()"
+                            style="color: var(--accent-red); border-color: rgba(239, 68, 68, 0.3);">
+                            <i class="fa-solid fa-trash-can"></i> Factory Reset Data
+                        </button>
+                    </div>
+                    <div class="dashboard-cards">
+                        <div class="stat-card glass-panel gradient-1">
+                            <h3>Total Employees</h3>
+                            <div class="stat-value" id="stat-employees">0 <i class="fa-solid fa-arrow-trend-up"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card glass-panel gradient-2">
+                            <h3>Monthly Revenue</h3>
+                            <div class="stat-value" id="stat-revenue">$0 <i class="fa-solid fa-arrow-trend-up"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card glass-panel gradient-3">
+                            <h3>Low Stock Items</h3>
+                            <div class="stat-value text-warning" id="stat-low-stock">0 <i
+                                    class="fa-solid fa-triangle-exclamation"></i></div>
+                        </div>
+                        <div class="stat-card glass-panel gradient-4">
+                            <h3>Total Expenses</h3>
+                            <div class="stat-value text-warning" id="stat-expenses">$0 <i
+                                    class="fa-solid fa-money-bill-transfer"></i></div>
+                        </div>
+                    </div>
+
+                    <div class="charts-row"
+                        style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-top: 24px;">
+                        <div class="chart-container glass-panel"
+                            style="padding: 24px; position: relative; min-height: 300px;">
+                            <h3 style="margin-bottom: 16px; font-size: 16px; color: var(--text-secondary);">Income vs
+                                Expenses</h3>
+                            <div style="height: 250px;"><canvas id="mainChart"></canvas></div>
+                        </div>
+                        <div class="chart-container glass-panel"
+                            style="padding: 24px; position: relative; min-height: 300px;">
+                            <h3 style="margin-bottom: 16px; font-size: 16px; color: var(--text-secondary);">Departments
+                            </h3>
+                            <div style="height: 250px;"><canvas id="pieChart"></canvas></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Users & Admin View -->
+                <section id="users" class="content-section">
+                    <h2 class="section-title">System Users & Roles</h2>
+                    <div class="module-content glass-panel">
+                        <div class="action-bar">
+                            <button class="btn btn-primary" onclick="openModal('addUserModal')"><i
+                                    class="fa-solid fa-user-plus"></i> Add User</button>
+                        </div>
+                        <div class="table-container fade-in table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="users-tbody">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- HR View -->
+                <section id="hr" class="content-section">
+                    <h2 class="section-title">HR & Attendance Management</h2>
+                    <div class="module-content glass-panel">
+                        <div class="action-bar">
+                            <button class="btn btn-primary" id="addEmployeeBtn"
+                                onclick="openModal('addEmployeeModal')"><i class="fa-solid fa-plus"></i> Add
+                                Employee</button>
+                            <button class="btn btn-secondary" onclick="markAllPresent()"><i
+                                    class="fa-solid fa-check-double"></i> Mark All Present (Today)</button>
+                        </div>
+                        <div class="search-bar" style="width: 100%; margin-bottom: 20px; background: rgba(0,0,0,0.2);">
+                            <i class="fa-solid fa-search"></i>
+                            <input type="text" id="hrSearch" placeholder="Search employees by name, ID or department..."
+                                onkeyup="searchHR()">
+                        </div>
+                        <div class="table-container fade-in table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Employee Name</th>
+                                        <th>Department</th>
+                                        <th>Position</th>
+                                        <th>Attendance (This Month)</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="hr-tbody">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Finance View -->
+                <section id="finance" class="content-section">
+                    <h2 class="section-title">Financial Overview</h2>
+                    <div class="module-content glass-panel">
+                        <div class="tabs-header">
+                            <button class="tab-btn active" data-tab="revenue">Income/Revenue</button>
+                            <button class="tab-btn" data-tab="expenses">Expenses</button>
+                            <button class="tab-btn" data-tab="parties">Parties (Ledger)</button>
+                            <button class="tab-btn" data-tab="ledger">General Ledger Summary</button>
+                        </div>
+
+                        <div class="tab-content active fade-in" id="revenue">
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Description</th>
+                                            <th>Amount</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="revenue-tbody">
+                                        <!-- Dynamic -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="tab-content fade-in" id="expenses">
+                            <div class="action-bar">
+                                <button class="btn btn-primary" id="addExpenseBtn"><i class="fa-solid fa-plus"></i> Log
+                                    General Expense</button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Description</th>
+                                            <th>Category</th>
+                                            <th>Amount</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="expenses-tbody">
+                                        <!-- Dynamic -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="tab-content fade-in" id="parties">
+                            <div class="action-bar">
+                                <button class="btn btn-primary" onclick="openModal('addPartyModal')"><i
+                                        class="fa-solid fa-user-tie"></i> Add Party/Vendor</button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Party ID</th>
+                                            <th>Name</th>
+                                            <th>Type</th>
+                                            <th>Contact</th>
+                                            <th>Balance</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="parties-tbody">
+                                        <!-- Dynamic -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="tab-content fade-in" id="ledger">
+                            <h3 style="margin-bottom:16px;">General Ledger Summary</h3>
+                            <p style="color:var(--text-secondary); margin-bottom:20px;">Net Income (Revenue - Expenses)
+                                is automatically updated from Inventory POs, Payroll, and POS Sales.</p>
+                            <div class="dashboard-cards" style="margin-bottom: 20px;">
+                                <div class="stat-card glass-panel gradient-1" style="min-height: 100px;">
+                                    <h3>Total Revenue</h3>
+                                    <div class="stat-value" id="ledger-revenue">$0</div>
+                                </div>
+                                <div class="stat-card glass-panel gradient-3" style="min-height: 100px;">
+                                    <h3>Total Expenses</h3>
+                                    <div class="stat-value" id="ledger-expenses">$0</div>
+                                </div>
+                                <div class="stat-card glass-panel gradient-4" style="min-height: 100px;">
+                                    <h3>Net Balance</h3>
+                                    <div class="stat-value" id="ledger-balance">$0</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- POS View -->
+                <section id="pos" class="content-section">
+                    <h2 class="section-title">Point of Sale</h2>
+                    <div class="pos-layout">
+                        <div class="module-content glass-panel" style="min-height: auto;">
+                            <div class="search-bar" style="width: 100%; margin-bottom: 20px;">
+                                <i class="fa-solid fa-search"></i>
+                                <input type="text" placeholder="Scan barcode or search product...">
+                            </div>
+                            <div class="pos-products" id="pos-products-container">
+                                <!-- Dynamic Products -->
+                            </div>
+                        </div>
+                        <div class="cart-area glass-panel">
+                            <h3 style="margin-bottom: 16px;">Current Order</h3>
+                            <div class="cart-items" id="cart-items-container">
+                                <!-- Dynamic Cart Items -->
+                            </div>
+                            <div class="cart-summary">
+                                <div class="summary-row"><span>Subtotal:</span><span id="cart-subtotal">$0.00</span>
+                                </div>
+                                <div class="summary-row"><span>Tax (10%):</span><span id="cart-tax">$0.00</span></div>
+                                <div class="summary-total" style="display:flex;justify-content:space-between">
+                                    <span>Total:</span><span id="cart-total">$0.00</span>
+                                </div>
+                                <button class="btn btn-primary" onclick="checkoutCart()"
+                                    style="width: 100%; justify-content: center; margin-top: 16px; padding: 14px; font-size: 16px;">
+                                    <i class="fa-solid fa-credit-card"></i> Process Payment
+                                </button>
+                                <button class="btn btn-secondary" onclick="printReceipt()" id="printReceiptBtn" disabled
+                                    style="width: 100%; justify-content: center; margin-top: 10px; padding: 10px; font-size: 14px; color:var(--text-secondary);">
+                                    <i class="fa-solid fa-print"></i> Print Last Receipt
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Inventory View -->
+                <section id="inventory" class="content-section">
+                    <h2 class="section-title">Inventory Management</h2>
+                    <div class="module-content glass-panel">
+                        <div class="action-bar">
+                            <button class="btn btn-primary" onclick="openModal('addProductModal')"><i
+                                    class="fa-solid fa-plus"></i> Add New Item</button>
+                            <button class="btn btn-secondary" onclick="openModal('addStockModal')"><i
+                                    class="fa-solid fa-boxes-packing"></i> Purchase Stock</button>
+                        </div>
+                        <div class="search-bar" style="width: 100%; margin-bottom: 20px; background: rgba(0,0,0,0.2);">
+                            <i class="fa-solid fa-search"></i>
+                            <input type="text" id="invSearch" placeholder="Search products by name, SKU or category..."
+                                onkeyup="searchInventory()">
+                        </div>
+                        <div class="table-container fade-in table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>SKU</th>
+                                        <th>Product Name</th>
+                                        <th>Category</th>
+                                        <th>Cost Price</th>
+                                        <th>Sale Price</th>
+                                        <th>Stock Level</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="inventory-tbody">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Payroll View -->
+                <section id="payroll" class="content-section">
+                    <h2 class="section-title">Payroll System</h2>
+                    <div class="module-content glass-panel">
+                        <div class="action-bar">
+                            <button class="btn btn-primary" onclick="processPayroll()"><i
+                                    class="fa-solid fa-calculator"></i> Run Payroll for this Month</button>
+                        </div>
+                        <div class="table-container fade-in table-responsive">
+                            <p style="color:var(--text-secondary); margin-bottom: 10px; font-size: 14px;">Running
+                                payroll calculates net pay based on employee attendance (Days Present). Payroll expenses
+                                automatically sync to Finance.</p>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Emp ID</th>
+                                        <th>Employee Name</th>
+                                        <th>Attendance</th>
+                                        <th>Basic Salary</th>
+                                        <th>Absence Deductions</th>
+                                        <th>Net Pay</th>
+                                        <th>Payment Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="payroll-tbody">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Reports View -->
+                <section id="reports" class="content-section">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                        <h2 class="section-title" style="margin-bottom: 0;">System Reports & Analytics</h2>
+                        <button class="btn btn-secondary" onclick="printReport()"
+                            style="color:var(--accent-blue); border-color: rgba(59, 130, 246, 0.3);">
+                            <i class="fa-solid fa-print"></i> Print Reports
+                        </button>
+                    </div>
+                    <div class="module-content glass-panel" id="report-print-area">
+                        <div class="tabs-header">
+                            <button class="tab-btn active" data-tab="rep-hr">HR & Attendance</button>
+                            <button class="tab-btn" data-tab="rep-inv">Inventory Value</button>
+                            <button class="tab-btn" data-tab="rep-fin">Financial Summary</button>
+                        </div>
+
+                        <div class="tab-content active fade-in" id="rep-hr">
+                            <h3 style="margin-bottom:16px;">Departmental Attendance Summary</h3>
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Department</th>
+                                            <th>Total Employees</th>
+                                            <th>Perfect Attendance</th>
+                                            <th>Total Basic Salary</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="rep-hr-tbody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="tab-content fade-in" id="rep-inv">
+                            <h3 style="margin-bottom:16px;">Inventory Valuation</h3>
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Category</th>
+                                            <th>SKU Count</th>
+                                            <th>Total Units</th>
+                                            <th>Stock Value (Cost)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="rep-inv-tbody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="tab-content fade-in" id="rep-fin">
+                            <h3 style="margin-bottom:16px;">Financial Overview</h3>
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Metric</th>
+                                            <th>Total Count</th>
+                                            <th>Total Value ($)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="rep-fin-tbody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for Add Employee (HR) -->
+    <div class="modal-overlay" id="addEmployeeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Employee</h3>
+                <button class="close-btn" id="closeEmployeeModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="addEmployeeForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="empName" class="form-control" placeholder="Enter full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Department</label>
+                        <select id="empDept" class="form-control">
+                            <option>Engineering</option>
+                            <option>Marketing</option>
+                            <option>Sales</option>
+                            <option>Finance</option>
+                            <option>HR</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Position</label>
+                        <input type="text" id="empPos" class="form-control" placeholder="e.g. Senior Developer">
+                    </div>
+                    <div class="form-group">
+                        <label>Monthly Basic Salary ($)</label>
+                        <input type="number" id="empSalary" class="form-control" placeholder="0.00" required>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary"
+                    style="width: 100%; justify-content: center; margin-top: 10px;" onclick="addEmployee()">Save
+                    Employee</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Mark Leave (HR) -->
+    <div class="modal-overlay" id="markLeaveModal">
+        <div class="modal-content" style="width: 400px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Record Absence</h3>
+                <button class="close-btn" onclick="closeModal('markLeaveModal')"><i
+                        class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div style="text-align: center;">
+                <p>Are you sure you want to mark <strong id="leaveEmpName"></strong> as absent for 1 day?</p>
+                <p style="color:var(--text-secondary); font-size: 13px; margin-top: 10px; margin-bottom: 20px;">This
+                    will automatically deduct from their monthly payroll.</p>
+                <input type="hidden" id="leaveEmpId">
+                <button type="button" class="btn btn-primary" style="width: 100%; justify-content: center;"
+                    onclick="confirmLeave()">Confirm Absence</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Log Expense (Finance) -->
+    <div class="modal-overlay" id="addExpenseModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Log New Expense</h3>
+                <button class="close-btn" id="closeExpenseModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="addExpenseForm">
+                <div class="form-group">
+                    <label>Description</label>
+                    <input type="text" id="expDesc" class="form-control" placeholder="e.g. Office Rent" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="expCat" class="form-control">
+                            <option>Utilities</option>
+                            <option>Software</option>
+                            <option>Miscellaneous</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Amount ($)</label>
+                        <input type="number" id="expAmt" class="form-control" placeholder="0.00" required>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary"
+                    style="width: 100%; justify-content: center; margin-top: 10px;" onclick="addExpense()">Submit
+                    Expense</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Add Product (Inventory) -->
+    <div class="modal-overlay" id="addProductModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Product</h3>
+                <button class="close-btn" onclick="closeModal('addProductModal')"><i
+                        class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="addProductForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Product Name</label>
+                        <input type="text" id="prodName" class="form-control" placeholder="Enter name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="prodCat" class="form-control">
+                            <option>Electronics</option>
+                            <option>Furniture</option>
+                            <option>Accessories</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Cost Price ($) <small style="color:var(--text-secondary);">(For Finance)</small></label>
+                        <input type="number" id="prodCost" class="form-control" placeholder="0.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Sale Price ($) <small style="color:var(--text-secondary);">(For POS)</small></label>
+                        <input type="number" id="prodPrice" class="form-control" placeholder="0.00" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Initial Stock to Purchase</label>
+                    <input type="number" id="prodStock" class="form-control" placeholder="0" required>
+                </div>
+                <p style="color:var(--accent-red); margin-bottom: 10px; font-size: 13px;">* Adding a new product sets it
+                    up in the system with 0 initial stock.</p>
+                <button type="button" class="btn btn-primary" style="width: 100%; justify-content: center;"
+                    onclick="addProduct()">Add Product</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Purchase Stock (Inventory) -->
+    <div class="modal-overlay" id="addStockModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Purchase Stock</h3>
+                <button class="close-btn" onclick="closeModal('addStockModal')"><i
+                        class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="addStockForm">
+                <div class="form-group">
+                    <label>Select Product</label>
+                    <select id="stockProdSelect" class="form-control">
+                        <!-- Dynamic -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Quantity to Purchase</label>
+                    <input type="number" id="purchaseQty" class="form-control" placeholder="0" required>
+                </div>
+                <p style="color:var(--accent-red); margin-bottom: 10px; font-size: 13px;">* Purchasing stock will
+                    automatically log an expense in the Finance module for (Cost × Stock).</p>
+                <button type="button" class="btn btn-primary" style="width: 100%; justify-content: center;"
+                    onclick="purchaseStock()">Purchase Stock</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Add Party (Finance) -->
+    <div class="modal-overlay" id="addPartyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Party/Vendor</h3>
+                <button class="close-btn" onclick="closeModal('addPartyModal')"><i
+                        class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="addPartyForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Party Name</label>
+                        <input type="text" id="partyName" class="form-control" placeholder="Company/Individual Name"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label>Type</label>
+                        <select id="partyType" class="form-control">
+                            <option>Vendor (Payable)</option>
+                            <option>Client (Receivable)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Contact Email</label>
+                        <input type="email" id="partyEmail" class="form-control" placeholder="email@party.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Opening Balance ($)</label>
+                        <input type="number" id="partyBal" class="form-control" placeholder="0.00" required>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary"
+                    style="width: 100%; justify-content: center; margin-top: 10px;" onclick="addParty()">Create Party
+                    Ledger</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Add User -->
+    <div class="modal-overlay" id="addUserModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Create Admin/System User</h3>
+                <button class="close-btn" onclick="closeModal('addUserModal')"><i
+                        class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="addUserForm">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="usrName" class="form-control" placeholder="Name" required>
+                </div>
+                <div class="form-group">
+                    <label>Email ID</label>
+                    <input type="email" id="usrEmail" class="form-control" placeholder="email@company.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select id="usrRole" class="form-control">
+                        <option>System Admin</option>
+                        <option>HR Manager</option>
+                        <option>Finance Manager</option>
+                        <option>Cashier (POS)</option>
+                    </select>
+                </div>
+                <button type="button" class="btn btn-primary"
+                    style="width: 100%; justify-content: center; margin-top: 10px;" onclick="addUser()">Create
+                    User</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast-container" class="toast-container"></div>
+    <div id="print-receipt" style="display: none;"></div>
+
+    <script src="js/app.js"></script>
+</body>
+
+</html>
